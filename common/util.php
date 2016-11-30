@@ -917,7 +917,6 @@ function getTalks($dbh, $isActive=null) {
 		}
 	}
 
-	echo $sql;
 	$stm = $dbh->prepare($sql);
 	$res = $stm->execute();
 
@@ -968,6 +967,16 @@ function updateTalk($dbh, $id, $title, $isActive, $description) {
 }
 
 function deleteTalk($dbh, $talk) {
+	// Delete Talk assignment
+	$sql = "delete from talkassignment where TalkID=?";
+	$stm = $dbh->prepare($sql);
+	$res = $stm->execute(array($talk["TalkID"]));
+
+	if(!$res) {
+		echo "Could not delete talkassignment";
+		return 0;
+	}
+
 	$sql = "delete from talk where TalkID=?";
 	$stm = $dbh->prepare($sql);
 	$res = $stm->execute(array($talk["TalkID"]));
