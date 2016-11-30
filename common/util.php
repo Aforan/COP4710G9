@@ -313,7 +313,6 @@ function searchIndividuals($dbh, $searchParams, $extraParams) {
 		$andAppend = true;
 	}
 
-	echo $sql;
 	$stm = $dbh->prepare($sql);
 	$res = $stm->execute($params);
 
@@ -668,7 +667,6 @@ function getRoles($dbh, $isActive=null) {
 		}
 	}
 
-	echo $sql;
 	$stm = $dbh->prepare($sql);
 	$res = $stm->execute();
 
@@ -1007,7 +1005,7 @@ function getTalkAssignments($dbh, $eventID) {
 				on r.TalkID=ra.TalkID
 				join individual as i on i.IndividualID=ra.TeamMemberID
 				where ra.EventID=? and r.IsActive";
-	echo $sql;
+
 	$stm = $dbh->prepare($sql);
 	$res = $stm->execute(array($eventID));
 
