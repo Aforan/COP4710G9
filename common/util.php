@@ -551,16 +551,48 @@ function getCursillo($dbh, $eventId) {
 }
 
 function deleteCursillo($dbh, $weekend) {
+	// Delete the address
 	$addressId = $weekend['AddressID'];
 	if($addressId) {
 		deleteAddress($dbh, $addressId);
 	}
 
-	$sql = "delete from cursilloweekend where EventID=?";
+	// Delete the candidateattendees
+	$eventId = $weekend['EventID'];
+	$sql = "delete from candidateattendee where EventID=?";
 	$stm = $dbh->prepare($sql);
-	$res = $stm->execute(array($weekend['EventID']));
+	$res = $stm->execute(array($eventId));
 
-	return $res;
+	if($res) {
+		// Delete the roleassignments
+		$sql = "delete from roleassignment where EventID=?";
+		$stm = $dbh->prepare($sql);
+		$res = $stm->execute(array($eventId));
+
+		if($res) {
+			// Delete the talkassignments
+			$sql = "delete from talkassignment where EventID=?";
+			$stm = $dbh->prepare($sql);
+			$res = $stm->execute(array($eventId));
+
+			if($res) {
+				$sql = "delete from cursilloweekend where EventID=?";
+				$stm = $dbh->prepare($sql);
+				$res = $stm->execute(array($weekend['EventID']));
+
+				return $res;
+			} else {
+				echo "Error deleting Talk Assignments";
+			}
+
+		} else {
+			echo "Error deleting Role Assignments";
+		}
+
+	} else {
+		echo "Error deleting candidateattendee entries";
+	}
+
 }
 
 /*				Role Stuff 			*/

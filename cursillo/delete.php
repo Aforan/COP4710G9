@@ -17,24 +17,25 @@
 	</head>
 <body>
 	<div class="container">
+		<?php include('../common/nav.php'); ?>
 		<div class="row">
 			<div class="span12">
 				<?php
 					$id = $_GET['id'];
 					if(empty($id)) {
-						die("Must provide an id to delete!");
-					}
-
-					$weekend = getCursillo($dbh, $id);
-					if(!empty($weekend)) {
-						if(deleteCursillo($dbh, $weekend)) {
-							echo $weekend['EventName'] . " Deleted Successfully!";
-						} else {
-							echo "Error Deleting Weekend";
-						}
-					
+						echo "Must provide an id to delete!";
 					} else {
-						echo "Weekend not found";
+						$weekend = getCursillo($dbh, $id);
+						if(!empty($weekend)) {
+							if(deleteCursillo($dbh, $weekend)) {
+								echo $weekend['EventName'] . " Deleted Successfully!";
+							} else {
+								echo "Error Deleting Weekend";
+							}
+						
+						} else {
+							echo "Weekend not found";
+						}						
 					}
 				?>
 			</div>
