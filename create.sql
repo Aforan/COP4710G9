@@ -79,7 +79,7 @@ CREATE TABLE `teammember` (
   `FirstCursillo` int(11) DEFAULT NULL,
   PRIMARY KEY (`TeamMemberID`),
   KEY `FirstCursillo_idx` (`FirstCursillo`),
-  CONSTRAINT `FirstCursillo` FOREIGN KEY (`FirstCursillo`) REFERENCES `cursilloweekend` (`EventID`) ON UPDATE CASCADE,
+  CONSTRAINT `FirstCursillo` FOREIGN KEY (`FirstCursillo`) REFERENCES `cursilloweekend` (`EventID`) ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT `TeamMemberID` FOREIGN KEY (`TeamMemberID`) REFERENCES `individual` (`IndividualID`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
