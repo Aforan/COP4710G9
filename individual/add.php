@@ -19,47 +19,69 @@
 	<div class="container">
 		<?php include('../common/nav.php'); ?>
 		<?php if($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
-			<?php 
-				$addressId = createAddress($dbh,
-										   $_POST['addressline1'], 
-										   $_POST['addressline2'], 
-										   $_POST['city'],
-										   $_POST['state'],
-										   $_POST['zipcode']);
+			<?php
+				$requiredParams = [
+					'first',
+					'last',
+					'gender',
+					'addressline1',
+					'addressline2',
+					'city',
+					'state',
+					'zipcode',
+				];
 
-				$sponsorId = findSponsor($dbh, $_POST['sponsorfirst'], $_POST['sponsorlast']);
-				$parishName = findParish($dbh, $_POST['parishname']);
-
-				$ismarried = isset($_POST['ismarried']) ? $_POST['ismarried'] : "off";
-				$hasspouseattended = isset($_POST['hasspouseattended']) ? $_POST['hasspouseattended'] : "off";
-				$birthday = validateDate($_POST['birthday']) ? $_POST['birthday'] : null;
-
-				$res = createIndividual($dbh,
-										$addressId, 
-										$_POST['first'],
-										$_POST['last'],
-										$_POST['gender'],
-										$_POST['spousefirst'],
-										$_POST['spouselast'],
-										$_POST['pastorfirst'],
-										$_POST['pastorlast'],
-										$_POST['email'],
-										$_POST['phone'],
-										$_POST['nametag'],
-										$_POST['occupation'],
-										$sponsorId,
-										$parishName,
-										$birthday,
-										checkBoxToBit($ismarried),
-										checkBoxToBit($hasspouseattended),
-										"CANDIDATE");
-
-				if($res) {
-					print($_POST['first'] . " " . $_POST['last'] . " Created Successfully!");
+				$validationError = validateInput($requiredParams, $_POST);
+				
+				if($validationError) {
+					echo "Invalid input $validationError";
 				} else {
-					print("Error creating individual ");
-					print_r($dbh->errorInfo());
+					$addressId = createAddress($dbh,
+											   $_POST['addressline1'], 
+											   $_POST['addressline2'], 
+											   $_POST['city'],
+											   $_POST['state'],
+											   $_POST['zipcode']);
+
+					$sponsorId = findSponsor($dbh, $_POST['sponsorfirst'], $_POST['sponsorlast']);
+					$parishName = findParish($dbh, $_POST['parishname']);
+
+					$ismarried = isset($_POST['ismarried']) ? $_POST['ismarried'] : "off";
+					
+					$hasspouseattended = ($ismarried == "on" && 
+										  isset($_POST['hasspouseattended'])) 
+										? $_POST['hasspouseattended'] : "off";
+
+					$birthday = validateDate($_POST['birthday']) ? $_POST['birthday'] : null;
+
+					$res = createIndividual($dbh,
+											$addressId, 
+											$_POST['first'],
+											$_POST['last'],
+											$_POST['gender'],
+											$ismarried == "on" ? $_POST['spousefirst'] : "",
+											$ismarried == "on" ? $_POST['spouselast'] : "",
+											$_POST['pastorfirst'],
+											$_POST['pastorlast'],
+											$_POST['email'],
+											$_POST['phone'],
+											$_POST['nametag'],
+											$_POST['occupation'],
+											$sponsorId,
+											$parishName,
+											$birthday,
+											checkBoxToBit($ismarried),
+											checkBoxToBit($hasspouseattended),
+											"CANDIDATE");
+
+					if($res) {
+						print($_POST['first'] . " " . $_POST['last'] . " Created Successfully!");
+					} else {
+						print("Error creating individual ");
+						print_r($dbh->errorInfo());
+					}
 				}
+				
 			?>
 		<?php endif ?>
 		<div class="row menu-header">

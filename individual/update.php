@@ -30,41 +30,60 @@
 					die("Could not find individual");
 				}
 
-				$addressID = createUpdateAddress($dbh,
-	 											 $individual['AddressID'], 
-	 											 $_POST['addressline1'], 
-	 											 $_POST['addressline2'], 
-	 											 $_POST['city'],
-	 											 $_POST['state'],
-	 											 $_POST['zipcode']);
-							
-				$sponsorId = findSponsor($dbh, $_POST['sponsorfirst'], $_POST['sponsorlast']);
-				$parishName = findParish($dbh, $_POST['parishname']);
+				$requiredParams = [
+					'first',
+					'last',
+					'gender',
+					'addressline1',
+					'addressline2',
+					'city',
+					'state',
+					'zipcode',
+				];
 
-				$ismarried = isset($_POST['ismarried']) ? $_POST['ismarried'] : "off";
-				$hasspouseattended = isset($_POST['hasspouseattended']) ? $_POST['hasspouseattended'] : "off";
-				$birthday = validateDate($_POST['birthday']) ? $_POST['birthday'] : null;
+				$validationError = validateInput($requiredParams, $_POST);
+				if($validationError) {
+					echo "Invalid input $validationError";
+				} else {
+					$addressID = createUpdateAddress($dbh,
+		 											 $individual['AddressID'], 
+		 											 $_POST['addressline1'], 
+		 											 $_POST['addressline2'], 
+		 											 $_POST['city'],
+		 											 $_POST['state'],
+		 											 $_POST['zipcode']);
+								
+					$sponsorId = findSponsor($dbh, $_POST['sponsorfirst'], $_POST['sponsorlast']);
+					$parishName = findParish($dbh, $_POST['parishname']);
 
-				$res = updateIndividual($dbh,
-										$id,
-										$addressID, 
-										$_POST['first'],
-										$_POST['last'],
-										$_POST['gender'],
-										$_POST['spousefirst'],
-										$_POST['spouselast'],
-										$_POST['pastorfirst'],
-										$_POST['pastorlast'],
-										$_POST['email'],
-										$_POST['phone'],
-										$_POST['nametag'],
-										$_POST['occupation'],
-										$sponsorId,
-										$parishName,
-										$birthday,
-										checkBoxToBit($ismarried),
-										checkBoxToBit($hasspouseattended));
+					$ismarried = isset($_POST['ismarried']) ? $_POST['ismarried'] : "off";
+					
+					$hasspouseattended = ($ismarried == "on" && 
+										  isset($_POST['hasspouseattended'])) 
+										? $_POST['hasspouseattended'] : "off";
+					
+					$birthday = validateDate($_POST['birthday']) ? $_POST['birthday'] : null;
 
+					$res = updateIndividual($dbh,
+											$id,
+											$addressID, 
+											$_POST['first'],
+											$_POST['last'],
+											$_POST['gender'],
+											$ismarried == "on" ? $_POST['spousefirst'] : "",
+											$ismarried == "on" ? $_POST['spouselast'] : "",
+											$_POST['pastorfirst'],
+											$_POST['pastorlast'],
+											$_POST['email'],
+											$_POST['phone'],
+											$_POST['nametag'],
+											$_POST['occupation'],
+											$sponsorId,
+											$parishName,
+											$birthday,
+											checkBoxToBit($ismarried),
+											checkBoxToBit($hasspouseattended));					
+				}
 			?>
 		<?php endif; ?>
 		<?php 

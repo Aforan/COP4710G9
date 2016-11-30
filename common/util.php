@@ -19,7 +19,6 @@ function connectToDB() {
 }
 
 /*		Site Specific		*/
-
 function baseDir() {
 	$user = get_current_user();
 	return '/~' . $user . '/';
@@ -38,10 +37,19 @@ function bitToCheckBox($data) {
 	return $data == 1 ? 'on' : 'off';
 }
 
-function validateDate($date)
-{
+function validateDate($date) {
     $d = DateTime::createFromFormat('Y-m-d', $date);
     return $d && $d->format('Y-m-d') === $date;
+}
+
+function validateInput($required, $data) {
+	foreach($required as $field) {
+		if(!isset($data[$field]) || empty($data[$field])) {
+			return "Missing Field: $field";
+		}
+	}
+
+	return false;
 }
 
 /*			Individual Stuff 				*/
@@ -242,7 +250,6 @@ function getIndividuals($dbh) {
 }
 
 function searchIndividuals($dbh, $searchParams, $extraParams) {
-	//$attendence=null, $futureAttendence=null, $role=null
 	$andAppend = false;
 	$params = array();
 	$sql = "select * from individual";
