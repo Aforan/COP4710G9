@@ -32,8 +32,11 @@
 									$_POST['diocese'],
 									$addressId);
 
-				print($res);
-				print_r($dbh->errorInfo());
+				if($res)  {
+					echo "Parish Created Successfully!";
+				} else {
+					echo "Error Creating Parish";
+				}
 
 			?>
 		<?php endif; ?>
