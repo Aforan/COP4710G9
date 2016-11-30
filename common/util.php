@@ -173,11 +173,63 @@ function getIndividual($dbh, $id) {
 }
 
 function deleteIndividual($dbh, $individual) {
+	// Delete Any attendence entries
+	$sql = "delete from candidateattendee where CandidateID=?";
+	$stm = $dbh->prepare($sql);
+	$res = $stm->execute(array($individual['IndividualID']));
+
+	if(!$res) {
+		echo "Could not delete candidate attendence records";
+		return 0;
+	}
+
+	// Delete Any candidate entries
+	$sql = "delete from candidate where CandidateID=?";
+	$stm = $dbh->prepare($sql);
+	$res = $stm->execute(array($individual['IndividualID']));
+
+	if(!$res) {
+		echo "Could not delete candidate records";
+		return 0;
+	}
+
+	// Delete Any roleassignment entries
+	$sql = "delete from roleassignment where TeamMemberID=?";
+	$stm = $dbh->prepare($sql);
+	$res = $stm->execute(array($individual['IndividualID']));
+
+	if(!$res) {
+		echo "Could not delete role assignment records";
+		return 0;
+	}
+
+	// Delete Any Teammember entries
+	$sql = "delete from teammember where TeamMemberID=?";
+	$stm = $dbh->prepare($sql);
+	$res = $stm->execute(array($individual['IndividualID']));
+
+	if(!$res) {
+		echo "Could not delete teammember records";
+		return 0;
+	}
+
+	// Delete Any talk assignment entries
+	$sql = "delete from talkassignment where TeamMemberID=?";
+	$stm = $dbh->prepare($sql);
+	$res = $stm->execute(array($individual['IndividualID']));
+
+	if(!$res) {
+		echo "Could not delete talk assignment records";
+		return 0;
+	}
+
 	deleteAddress($dbh, $individual['AddressID']);
 
 	$sql = "delete from individual where individualId=?";
 	$stm = $dbh->prepare($sql);
-	$stm->execute(array($individual['IndividualID']));
+	$res = $stm->execute(array($individual['IndividualID']));
+
+	return $res;
 }
 
 function getIndividuals($dbh) {
