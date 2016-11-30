@@ -719,6 +719,16 @@ function updateRole($dbh, $id, $roleName, $isActive) {
 }
 
 function deleteRole($dbh, $role) {
+	// Delete Role Assignments
+	$sql = "delete from roleassignment where RoleID=?";
+	$stm = $dbh->prepare($sql);
+	$res = $stm->execute(array($role["RoleID"]));
+
+	if(!$res) {
+		echo "Could not delete role assignments";
+		return 0;
+	}
+
 	$sql = "delete from role where RoleID=?";
 	$stm = $dbh->prepare($sql);
 	$res = $stm->execute(array($role["RoleID"]));

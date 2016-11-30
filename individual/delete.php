@@ -17,6 +17,7 @@
 	</head>
 <body>
 	<div class="container">
+		<?php include('../common/nav.php'); ?>
 		<div class="row">
 			<div class="span12">
 				<?php
